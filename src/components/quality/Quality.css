@@ -1,0 +1,31 @@
+.quality {
+  background: radial-gradient(ellipse at 73% 110%, #7b40251c, transparent 36%), #080c12;
+}
+.quality-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
+.quality .section-label { color: #e68e58; }
+.quality-story h2 { max-width: 480px; }
+.quality-description { max-width: 450px; margin: 22px 0 0; color: #94a3bc; font-size: 15px; line-height: 1.8; }
+.quality-strands { display: block; width: 100%; max-width: 420px; margin-top: 36px; }
+.quality-checklist { padding: 32px; border: 1px solid #242a35; background: #0c1017; }
+.quality-checklist .section-label { margin-bottom: 22px; }
+.quality-checklist ul { display: grid; gap: 16px; padding: 0; margin: 0; list-style: none; }
+.quality-checklist li { display: flex; align-items: baseline; gap: 16px; font-size: 13px; line-height: 1.55; }
+.quality-check { flex-shrink: 0; color: #e68e58; }
+.quality-audit { border-top: 1px solid #222936; margin-top: 22px; padding-top: 22px; }
+.quality-audit p { margin: 0 0 16px; color: #94a3bc; font-size: 13px; line-height: 1.6; }
+.quality-audit-link { display: inline-flex; align-items: center; min-height: 38px; padding: 10px 18px; border: 1px solid #392a23; color: #e68e58; text-decoration: none; text-transform: uppercase; font: 9px/1.4 Consolas, 'Courier New', monospace; letter-spacing: 1.4px; }
+.quality-audit-link:hover { background: #e68e5810; border-color: #e68e58; }
+.quality-audit-link:focus-visible { outline: 2px solid #e68e58; outline-offset: 4px; }
+@media (max-width: 900px) {
+  .quality-layout { gap: 40px; }
+  .quality-checklist { padding: 26px; }
+}
+@media (max-width: 600px) {
+  .quality-layout { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .quality-description { font-size: 14px; line-height: 1.65; margin-top: 18px; }
+  .quality .quality-desktop, .quality-strands, .quality .desktop-copy { display: none; }
+  .quality .mobile-copy { display: inline; }
+  .quality-checklist { padding: 24px 22px; }
+  .quality-checklist .section-label { margin-bottom: 18px; }
+  .quality-checklist li { font-size: 13px; gap: 14px; }
+}

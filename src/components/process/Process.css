@@ -1,0 +1,17 @@
+.process { padding-bottom: 42px; background: #06090e; }
+.process-intro { max-width: 580px; margin: 20px 0 42px; color: #94a3bc; font-size: 14px; line-height: 1.75; }
+.process-stages { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; padding: 0; margin: 0; border: 1px solid #1b2230; background: #1b2230; list-style: none; }
+.process-stages li { padding: 24px 20px; background: #0a101b; }
+.stage-number { color: #609cfa; font: 9px/1.5 Consolas, monospace; letter-spacing: 1.5px; }
+.process-stages h3 { margin: 12px 0; font-size: 16px; letter-spacing: -0.03em; }
+.stage-timing { margin: 0 0 12px; color: #829abf; text-transform: uppercase; font: 8px/1.5 Consolas, monospace; letter-spacing: 1px; }
+.stage-description { margin: 0; color: #94a3bc; font-size: 12px; line-height: 1.65; }
+.process-stages .process-verify { background: #0e1016; }
+.process-verify .stage-number, .process-verify .stage-timing { color: #df9569; }
+@media (min-width: 601px) and (max-width: 1000px) {
+  .process-stages { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .process { display: none; }
+  .nav-links a[href="#process"] { display: none; }
+}

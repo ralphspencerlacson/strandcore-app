@@ -16,14 +16,19 @@
 
 .landing {
   min-height: 100svh;
-  display: grid;
-  align-items: center;
   overflow: hidden;
   position: relative;
   background: #06090e;
 }
 
-.landing::before {
+.landing-hero {
+  position: relative;
+  min-height: calc(100svh - 76px);
+  display: grid;
+  align-items: center;
+}
+
+.landing-hero::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -35,7 +40,28 @@
   mask-image: linear-gradient(to bottom, #000 65%, transparent);
 }
 @media (max-width: 1050px) {
-  .landing {
+  .landing-hero {
     align-items: start;
   }
+}
+
+.landing-section {
+  position: relative;
+  border-top: 1px solid #1b2230;
+  padding: 88px 6%;
+  scroll-margin-top: 14px;
+}
+.section-container { width: 100%; max-width: 1180px; margin-inline: auto; }
+.section-label {
+  margin: 0 0 18px;
+  color: #609cfa;
+  text-transform: uppercase;
+  font: 10px/1.5 Consolas, 'Courier New', monospace;
+  letter-spacing: 1.8px;
+}
+.landing-section h2 { margin: 0; font-size: clamp(28px, 3vw, 40px); line-height: 1.08; letter-spacing: -0.045em; font-weight: 750; }
+@media (max-width: 600px) {
+  .landing-section { padding: 52px 24px; }
+  .section-label { font-size: 9px; margin-bottom: 16px; }
+  .landing-section h2 { font-size: clamp(26px, 6.9vw, 34px); line-height: 1.08; }
 }

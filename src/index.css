@@ -12,5 +12,32 @@
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
 button { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled) { cursor: pointer; }
+html {
+  scroll-padding-top: 90px;
+  scrollbar-width: thin;
+  scrollbar-color: #45658f #06090e;
+  scrollbar-gutter: stable;
+}
+
+/* Fallback for browsers without the standard scrollbar properties. */
+@supports not (scrollbar-color: #45658f #06090e) {
+  html::-webkit-scrollbar { width: 8px; height: 8px; }
+  html::-webkit-scrollbar-track { background: #06090e; }
+  html::-webkit-scrollbar-thumb {
+    background: #45658f;
+    border: 2px solid #06090e;
+    border-radius: 8px;
+  }
+  html::-webkit-scrollbar-thumb:hover { background: #609cfa; }
+  html::-webkit-scrollbar-thumb:active { background: #8cb7ff; }
+  html::-webkit-scrollbar-button { display: none; }
+  html::-webkit-scrollbar-corner { background: #06090e; }
+}
+
+@media (forced-colors: active) {
+  html { scrollbar-color: auto; scrollbar-width: auto; }
+}
 button:focus-visible { outline: 2px solid #b8d2ff; outline-offset: 5px; }
 ::selection { color: #06090e; background: #8cb7ff; }

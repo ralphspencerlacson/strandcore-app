@@ -1,0 +1,9 @@
+.brand-logo { display: block; width: 104px; height: auto; flex-shrink: 0; overflow: hidden; }
+.brand-logo image { filter: brightness(0) invert(1); opacity: 0.92; }
+.brand-link { display: inline-flex; align-items: center; flex-shrink: 0; }
+.contact .contact-logo { width: 154px; margin: 0 auto 30px; }
+.site-footer .brand-logo { width: 86px; }
+@media (max-width: 760px) {
+  .site-header .brand-logo { width: 88px; }
+  .contact .contact-logo { width: 132px; margin-bottom: 26px; }
+}

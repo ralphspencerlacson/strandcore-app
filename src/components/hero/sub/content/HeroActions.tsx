@@ -4,10 +4,10 @@ import type { HeroReveal } from './content.motion'
 export default function HeroActions({ reveal }: { reveal: HeroReveal }) {
   return (
     <motion.div className="hero-actions" {...reveal(3)}>
-      <button className="button button-primary" type="button">
+      <button className="button button-primary" type="button" onClick={() => document.getElementById('contact')?.scrollIntoView({ block: 'start' })}>
         Scope a build <span aria-hidden="true">→</span>
       </button>
-      <button className="button button-secondary" type="button">
+      <button className="button button-secondary" type="button" onClick={() => document.getElementById('quality')?.scrollIntoView({ block: 'start' })}>
         Why the QA seat
       </button>
     </motion.div>

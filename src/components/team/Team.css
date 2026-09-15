@@ -1,0 +1,26 @@
+.team { border-top: 0; background: #06090e; }
+.team-header { margin-bottom: 40px; }
+.team-header h2 { max-width: 560px; }
+.team-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border: 1px solid #1b2230; background: #1b2230; }
+.team-card { padding: 26px 24px; background: #0a101b; }
+.team-avatar { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 18px; border: 1px solid #20324f; border-radius: 50%; background: #0f1a2c; color: #83aff4; font: 16px/1 Consolas, monospace; }
+.team-card h3 { margin: 0 0 8px; font-size: 18px; letter-spacing: -0.03em; }
+.team-role { margin: 0 0 14px; color: #829abf; font: 8px/1.5 Consolas, monospace; text-transform: uppercase; letter-spacing: 1px; }
+.team-description { margin: 0; color: #94a3bc; font-size: 12px; line-height: 1.65; }
+.team-card-qa { background: #101116; }
+.team-card-qa .team-avatar { color: #df9569; background: #1b130f; border-color: #392a23; }
+.team-card-qa .team-role { color: #df9569; }
+.team-role-mobile { display: none; }
+@media (max-width: 900px) {
+  .team-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .team { border-top: 1px solid #1b2230; }
+  .team-header { display: block; margin-bottom: 26px; }
+  .team-description, .team-role-desktop { display: none; }
+  .team-role-mobile { display: inline; }
+  .team-card { padding: 20px 16px; }
+  .team-avatar { width: 38px; height: 38px; margin-bottom: 14px; font-size: 13px; }
+  .team-card h3 { font-size: 16px; }
+  .team-role { font-size: 7px; margin-bottom: 0; }
+}

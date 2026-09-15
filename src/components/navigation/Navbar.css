@@ -1,0 +1,58 @@
+.site-header { position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #1b2230; background: #06090ef5; }
+.site-nav { display: flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 76px; max-width: 1440px; margin-inline: auto; padding: 16px 6%; }
+.nav-links { display: flex; align-items: center; gap: 26px; }
+.nav-links a { color: #94a3bc; text-decoration: none; font-size: 12px; }
+.nav-links a:hover { color: #fff; }
+.nav-links .nav-project { display: inline-flex; align-items: center; justify-content: center; gap: 20px; padding: 13px 20px; color: #081427; background: #609cfa; font: 9px/1.4 Consolas, 'Courier New', monospace; text-transform: uppercase; letter-spacing: 1.3px; }
+.nav-toggle { display: none; }
+.site-header a:focus-visible { outline: 2px solid #b8d2ff; outline-offset: 5px; }
+.site-header { transition: opacity 420ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1), background-color 220ms ease, box-shadow 220ms ease; }
+.site-header.is-loading { opacity: 0; visibility: hidden; transform: translateY(-8px); pointer-events: none; }
+.site-header.is-scrolled { background: #06090eeb; backdrop-filter: blur(16px); box-shadow: 0 8px 32px #00000026; }
+.nav-links a:not(.nav-project) { position: relative; }
+.nav-links a:not(.nav-project)::after { content: ''; position: absolute; left: 0; right: 0; bottom: -9px; height: 1px; background: #609cfa; transform: scaleX(0); transform-origin: left; transition: transform 220ms ease; }
+.nav-links a[aria-current='location'] { color: #edf4ff; }
+.nav-links a[aria-current='location']::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: no-preference) {
+  .site-header:not(.is-loading)::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, #609cfa 28%, #d4e7ff 50%, #609cfa 72%, transparent);
+    transform-origin: center; animation: nav-horizon 1600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .site-header:not(.is-loading) .brand-link { animation: nav-brand-enter 950ms cubic-bezier(0.16, 1, 0.3, 1) 140ms both; }
+  .site-header:not(.is-loading) .nav-links > a,
+  .site-header:not(.is-loading) .nav-toggle { animation: nav-item-enter 700ms cubic-bezier(0.16, 1, 0.3, 1) 320ms both; }
+  .site-header:not(.is-loading) .nav-links > a:nth-child(2) { animation-delay: 390ms; }
+  .site-header:not(.is-loading) .nav-links > a:nth-child(3) { animation-delay: 460ms; }
+  .site-header:not(.is-loading) .nav-links > a:nth-child(4) { animation-delay: 530ms; }
+  .site-header:not(.is-loading) .nav-links > a:nth-child(5) { animation-delay: 600ms; }
+  .site-header:not(.is-loading) .nav-links > .nav-project { animation-delay: 720ms; }
+  .site-header .brand-link:focus-visible, .site-header .nav-links > a:focus-visible, .site-header .nav-toggle:focus-visible { animation: none; }
+}
+@keyframes nav-horizon {
+  0% { transform: scaleX(0); opacity: 0; }
+  20% { opacity: 1; }
+  65% { transform: scaleX(1); opacity: 0.85; }
+  100% { transform: scaleX(1); opacity: 0.18; }
+}
+@keyframes nav-brand-enter {
+  from { opacity: 0; transform: translateY(-7px) scale(0.95); filter: blur(3px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes nav-item-enter {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header, .nav-links a:not(.nav-project)::after { transition: none; }
+  .site-header.is-loading { transform: none; }
+}
+@media (max-width: 760px) {
+  .site-nav { min-height: 64px; padding: 12px 24px; flex-wrap: wrap; gap: 0; }
+  .nav-toggle { display: flex; align-items: center; gap: 16px; padding: 10px 12px; border: 1px solid #232a37; background: transparent; color: #bdc7d8; font: 11px/1.5 Consolas, monospace; }
+  .nav-links { display: none; flex-basis: 100%; padding: 18px 0 8px; gap: 0; }
+  .nav-links.is-open { display: flex; flex-direction: column; align-items: stretch; }
+  .nav-links a { padding: 14px 12px; }
+  .nav-links .nav-project { margin-top: 12px; }
+  .nav-links a:not(.nav-project)::after { left: 12px; right: auto; width: 24px; bottom: 6px; }
+}
