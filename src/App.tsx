@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { motion, useReducedMotion, useTime, useTransform } from 'motion/react'
+import type { MotionValue } from 'motion/react'
 import './App.css'
 
 const stats = [
@@ -25,20 +27,66 @@ const coreBranches = [
   { path: 'M485 179 L455 151 H431 L406 126', x: 406, y: 126 },
 ]
 
-function Strands({ loading = false }: { loading?: boolean }) {
+const strands = [
+  { outward: 'M520 200 C298 200 335 88 180 88 H0', inward: 'M0 88 H180 C335 88 298 200 520 200' },
+  { outward: 'M520 200 C350 200 330 153 175 153 H0', inward: 'M0 153 H175 C330 153 350 200 520 200' },
+  { outward: 'M520 200 C350 200 330 247 175 247 H0', inward: 'M0 247 H175 C330 247 350 200 520 200' },
+  { outward: 'M520 200 C298 200 335 313 180 313 H0', inward: 'M0 313 H180 C335 313 298 200 520 200', copper: true },
+]
+
+type Phase = 'loading' | 'moving' | 'drawing' | 'ready'
+const flightTime = 0.72
+const cycleTime = 1.6
+const stagger = 0.22
+
+function EnergyChannel({ time, index }: { time: MotionValue<number>; index: number }) {
+  const strand = strands[index]
+  const elapsed = useTransform(time, (ms) => ms / 1000 - index * stagger)
+  const progress = useTransform(elapsed, (seconds) => seconds < 0 ? 0 : Math.min((seconds % cycleTime) / flightTime, 1))
+  const offset = useTransform(progress, (value) => 0.08 - value * 1.08)
+  const shineOpacity = useTransform(elapsed, (seconds) => seconds >= 0 && seconds % cycleTime < flightTime ? 1 : 0)
+  // The same clock drives the light's arrival and its matching node group.
+  const glow = useTransform(elapsed, (seconds) => {
+    const sinceArrival = seconds % cycleTime - flightTime
+    return seconds >= 0 && sinceArrival >= 0 && sinceArrival < 0.45
+      ? Math.pow(1 - sinceArrival / 0.45, 2)
+      : 0
+  })
+  const glowRadius = useTransform(glow, (value) => 3 + value * 4)
+  const ringOpacity = useTransform(glow, (value) => value * 0.65)
+
   return (
-    <svg className={loading ? 'loading-core' : 'strands'} viewBox={loading ? '453 139 134 122' : '0 0 720 400'} fill="none" aria-hidden="true">
+    <g>
+      <motion.path className="energy-shine" d={strand.inward} pathLength={1}
+        stroke={strand.copper ? '#ffe0b8' : '#d4f2ff'} strokeWidth="3"
+        strokeDasharray="0.08 1" style={{ strokeDashoffset: offset, opacity: shineOpacity }} />
+      <motion.g style={{ opacity: glow }} className="node-flash">
+        {coreBranches.filter((branch, branchIndex) => branch.copper ? index === 3 : index === branchIndex % 3).map((branch) => (
+          <g key={branch.path}>
+            <path d={branch.path} stroke={branch.copper ? '#efb68b' : '#91d8ff'} strokeWidth="2" />
+            <motion.circle cx={branch.x} cy={branch.y} r={glowRadius} fill={branch.copper ? '#ffdbaf' : '#d9f4ff'} />
+          </g>
+        ))}
+      </motion.g>
+      <motion.circle cx="520" cy="200" r="43" stroke={strand.copper ? '#ffd1a0' : '#bcf0ff'} strokeWidth="3" style={{ opacity: ringOpacity }} />
+    </g>
+  )
+}
+
+function EnergyFlow() {
+  const time = useTime()
+  return <g>{strands.map((_, index) => <EnergyChannel key={index} time={time} index={index} />)}</g>
+}
+
+function Core({ phase, reducedMotion }: { phase: Phase; reducedMotion: boolean }) {
+  const loading = phase === 'loading'
+  const pulsing = !reducedMotion && phase !== 'moving'
+  const duration = loading ? 0.9 : 1.8
+  return (
+    <motion.svg className="living-core" viewBox="-105 -105 210 210" fill="none" aria-hidden="true"
+      animate={{ scale: pulsing ? (loading ? [1, 1.12, 0.99, 1.065, 1] : [1, 1.035, 1]) : 1 }}
+      transition={pulsing ? { duration, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.15 }}>
       <defs>
-        <linearGradient id="blue-strand" x1="0" y1="200" x2="510" y2="200" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#619bf2" stopOpacity="0" />
-          <stop offset="0.35" stopColor="#619bf2" stopOpacity="0.75" />
-          <stop offset="1" stopColor="#91baff" />
-        </linearGradient>
-        <linearGradient id="copper-strand" x1="0" y1="310" x2="510" y2="200" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#d9956c" stopOpacity="0" />
-          <stop offset="0.5" stopColor="#d9956c" stopOpacity="0.85" />
-          <stop offset="1" stopColor="#e9ad86" />
-        </linearGradient>
         <radialGradient id="core-glow">
           <stop stopColor="#8eb6ff" stopOpacity="0.4" />
           <stop offset="1" stopColor="#8eb6ff" stopOpacity="0" />
@@ -47,66 +95,104 @@ function Strands({ loading = false }: { loading?: boolean }) {
           <stop stopColor="#a4ddff" />
           <stop offset="1" stopColor="#6eb3f5" />
         </radialGradient>
-        <filter id="node-glow" x="-200%" y="-200%" width="500%" height="500%">
-          <feGaussianBlur stdDeviation="3" />
-          <feMerge>
-            <feMergeNode />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
       </defs>
-      <circle cx="520" cy="200" r="105" fill="url(#core-glow)" />
-      {!loading && <g>
-      <g strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        {coreBranches.map(({ path, x, y, copper }) => (
-          <g key={path}>
-            <path d={path} stroke={copper ? '#cc936f' : '#6bbcf6'} opacity="0.45" />
-            <circle cx={x} cy={y} r="3" fill={copper ? '#ffc391' : '#b3e5ff'} filter="url(#node-glow)" />
-          </g>
-        ))}
-      </g>
-      <g fill="#a9ddff" filter="url(#node-glow)">
-        <circle cx="469" cy="143" r="2" />
-        <circle cx="590" cy="106" r="2" />
-        <circle cx="631" cy="146" r="2" />
-        <circle cx="626" cy="229" r="2" />
-        <circle cx="580" cy="326" r="2" />
-        <circle cx="459" cy="276" r="2" />
-      </g>
-      <g stroke="url(#blue-strand)" strokeWidth="4" strokeLinecap="round">
-        <path d="M0 88 H180 C335 88 298 200 520 200" />
-        <path d="M0 153 H175 C330 153 350 200 520 200" />
-        <path d="M0 247 H175 C330 247 350 200 520 200" />
-      </g>
-      <path d="M0 313 H180 C335 313 298 200 520 200" stroke="url(#copper-strand)" strokeWidth="4" strokeLinecap="round" />
-      </g>}
-      <circle cx="520" cy="200" r="45" stroke="#529eea" strokeWidth="1" opacity="0.5" />
-      <circle cx="520" cy="200" r="41" stroke="#65c8ff" strokeWidth="2" opacity="0.7" filter="url(#node-glow)" />
-      <circle cx="520" cy="200" r="37" fill="url(#core-fill)" stroke="#a1deff" strokeWidth="1.5" />
-    </svg>
+      <motion.circle className="core-halo" r="105" fill="url(#core-glow)"
+        animate={{ opacity: pulsing ? [0.55, 1, 0.55] : 0.8, scale: pulsing ? [0.85, 1.12, 0.85] : 1 }}
+        transition={{ duration, repeat: pulsing ? Infinity : 0, ease: 'easeInOut' }} />
+      {pulsing && <motion.circle className="core-ripple" stroke="#87d5ff" strokeWidth="1"
+        initial={{ r: 44, opacity: 0 }} animate={{ r: [44, loading ? 72 : 61], opacity: [0, loading ? 0.5 : 0.25, 0] }}
+        transition={{ duration, repeat: Infinity, ease: 'easeOut' }} />}
+      <circle r="45" stroke="#529eea" opacity="0.5" />
+      <circle className="core-ring" r="41" stroke="#65c8ff" strokeWidth="2" opacity="0.7" />
+      <circle r="37" fill="url(#core-fill)" stroke="#a1deff" strokeWidth="1.5" />
+    </motion.svg>
+  )
+}
+
+function Strands({ phase, reducedMotion, onMoveComplete, onDrawComplete }: {
+  phase: Phase
+  reducedMotion: boolean
+  onMoveComplete: () => void
+  onDrawComplete: () => void
+}) {
+  const draw = phase === 'drawing' || phase === 'ready'
+  return (
+    <div className="strands" aria-hidden="true">
+      <svg className="strand-network" viewBox="0 0 720 400" fill="none">
+        <defs>
+          <linearGradient id="blue-strand" x1="0" y1="200" x2="510" y2="200" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#619bf2" stopOpacity="0" />
+            <stop offset="0.35" stopColor="#619bf2" stopOpacity="0.75" />
+            <stop offset="1" stopColor="#91baff" />
+          </linearGradient>
+          <linearGradient id="copper-strand" x1="0" y1="310" x2="510" y2="200" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#d9956c" stopOpacity="0" />
+            <stop offset="0.5" stopColor="#d9956c" stopOpacity="0.85" />
+            <stop offset="1" stopColor="#e9ad86" />
+          </linearGradient>
+        </defs>
+        <g strokeLinecap="round" strokeLinejoin="round" visibility={draw ? 'visible' : 'hidden'}>
+          {coreBranches.map(({ path, x, y, copper }, index) => (
+            <g key={path}>
+              <motion.path d={path} stroke={copper ? '#cc936f' : '#6bbcf6'} strokeWidth="1.8" opacity="0.45"
+                initial={{ pathLength: 0 }} animate={{ pathLength: draw ? 1 : 0 }}
+                transition={{ duration: reducedMotion ? 0 : 0.65, delay: draw && !reducedMotion ? index * 0.025 : 0 }} />
+              <motion.circle className="circuit-node" cx={x} cy={y} r="3" fill={copper ? '#ffc391' : '#b3e5ff'}
+                initial={{ opacity: 0 }} animate={{ opacity: draw ? 1 : 0 }}
+                transition={{ duration: 0.2, delay: draw && !reducedMotion ? 0.5 + index * 0.025 : 0 }} />
+            </g>
+          ))}
+          {strands.map((strand, index) => (
+            <motion.path key={strand.outward} d={strand.outward} stroke={`url(#${strand.copper ? 'copper' : 'blue'}-strand)`} strokeWidth="4"
+              initial={{ pathLength: 0 }} animate={{ pathLength: draw ? 1 : 0 }}
+              transition={{ duration: reducedMotion ? 0 : 0.85, delay: draw && !reducedMotion ? index * 0.07 : 0, ease: 'easeInOut' }}
+              onAnimationComplete={index === strands.length - 1 && phase === 'drawing' ? onDrawComplete : undefined} />
+          ))}
+          {phase === 'ready' && !reducedMotion && <EnergyFlow />}
+        </g>
+      </svg>
+      {!reducedMotion && [5, 4, 3, 2, 1].map((index) => (
+        <motion.div key={index} layout
+          className={`core-anchor core-trace${phase === 'loading' ? ' core-anchor-loading' : ''}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: phase === 'moving' ? [0, 0.38 - index * 0.045, 0] : 0 }}
+          transition={{
+            layout: { duration: 0.85, delay: index * 0.045, ease: [0.65, 0, 0.35, 1] },
+            opacity: { duration: phase === 'moving' ? 1.1 : 0.25, times: [0, 0.25, 1] },
+          }}>
+          <svg viewBox="-105 -105 210 210" fill="none">
+            <circle r="45" stroke="#76c9ff" strokeWidth="1.5" />
+            <circle r="39" fill="#83caff" fillOpacity="0.25" stroke="#a0deff" strokeWidth="2" />
+          </svg>
+        </motion.div>
+      ))}
+      <motion.div layout className={`core-anchor${phase === 'loading' ? ' core-anchor-loading' : ''}`}
+        transition={{ layout: { duration: reducedMotion ? 0 : 0.85, ease: [0.65, 0, 0.35, 1] } }}
+        onLayoutAnimationComplete={phase === 'moving' ? onMoveComplete : undefined}>
+        <Core phase={phase} reducedMotion={reducedMotion} />
+      </motion.div>
+    </div>
   )
 }
 
 function App() {
-  const [loading, setLoading] = useState(true)
+  const [phase, setPhase] = useState<Phase>('loading')
+  const reducedMotion = Boolean(useReducedMotion())
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setLoading(false), 1200)
+    const timer = window.setTimeout(() => setPhase(reducedMotion ? 'ready' : 'moving'), 1200)
     return () => window.clearTimeout(timer)
-  }, [])
+  }, [reducedMotion])
 
-  if (loading) {
-    return (
-      <main className="loading-screen" role="status" aria-label="Loading Strandcore" aria-busy="true">
-        <Strands loading />
-      </main>
-    )
-  }
+  const intro = phase === 'loading' || phase === 'moving'
 
   return (
-    <main className="landing">
+    <main className="landing" aria-busy={intro} data-phase={phase}>
+      {intro && <motion.div className="intro-backdrop" initial={false} animate={{ opacity: phase === 'loading' ? 1 : 0 }} transition={{ duration: 0.85 }} />}
+      {phase === 'loading' && <span className="sr-only" role="status">Loading Strandcore</span>}
       <section className="hero" aria-labelledby="hero-title">
-        <div className="hero-content">
+        <motion.div className="hero-content" inert={intro}
+          initial={{ opacity: 0 }} animate={{ opacity: phase === 'loading' ? 0 : 1 }} transition={{ duration: reducedMotion ? 0 : 0.65, delay: reducedMotion ? 0 : 0.25 }}>
           <p className="eyebrow"><span className="eyebrow-dash" />Software studio <span className="separator">/</span> Metro Manila <span className="separator">/</span> GMT+8</p>
           <h1 id="hero-title">Four strands.<br />One <span>core</span>.</h1>
           <p className="hero-description">
@@ -127,8 +213,9 @@ function App() {
               </div>
             ))}
           </dl>
-        </div>
-        <Strands />
+        </motion.div>
+        <Strands phase={phase} reducedMotion={reducedMotion}
+          onMoveComplete={() => setPhase('drawing')} onDrawComplete={() => setPhase('ready')} />
       </section>
     </main>
   )
