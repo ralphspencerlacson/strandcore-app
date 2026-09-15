@@ -1,4 +1,4 @@
-import { useEnergyPulses } from './useEnergyPulses'
+import { useEnergyPulses } from '../../../../hooks/useEnergyPulses'
 import { motion, useTime, useTransform } from 'motion/react'
 import { strands, coreBranches } from './strand.data'
 import { strandPath } from './strandPath'

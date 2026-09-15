@@ -14,7 +14,7 @@ export function useScrollReveal(reducedMotion: boolean) {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue
         const element = entry.target as HTMLElement
-        element.style.setProperty('--reveal-delay', `${Math.min(stagger++, 3) * 65}ms`)
+        element.style.setProperty('--reveal-delay', `${Math.min(stagger++, 3) * 100}ms`)
         element.dataset.revealState = 'visible'
         observer.unobserve(element)
       }

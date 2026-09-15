@@ -9,7 +9,7 @@ import Process from '../../components/process/Process'
 import Team from '../../components/team/Team'
 import Contact, { Footer } from '../../components/contact/Contact'
 import { landingStats } from './data/landing.data'
-import { useScrollReveal } from './useScrollReveal'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 import './styles/LandingPage.css'
 import './styles/ScrollMotion.css'
 

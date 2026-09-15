@@ -2,16 +2,16 @@
 .contact::before { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 110%, #073879bb, transparent 60%); transform-origin: 50% 100%; }
 .contact > .section-container { position: relative; }
 @media (prefers-reduced-motion: no-preference) {
-  .contact[data-reveal-state]::before { transition: opacity 1600ms ease 140ms, transform 1900ms cubic-bezier(0.16, 1, 0.3, 1) 140ms; }
+  .contact[data-reveal-state]::before { transition: opacity 2100ms ease 180ms, transform 2500ms cubic-bezier(0.16, 1, 0.3, 1) 180ms; }
   .contact[data-reveal-state='pending']::before { opacity: 0; transform: translateY(36%) scale(0.5, 0.35); }
   .contact[data-reveal-state='visible']::before { opacity: 1; transform: translateY(0) scale(1); }
-  .contact[data-reveal-state] > .section-container > * { transition: opacity 850ms ease, transform 1000ms cubic-bezier(0.16, 1, 0.3, 1); }
+  .contact[data-reveal-state] > .section-container > * { transition: opacity 1100ms ease, transform 1300ms cubic-bezier(0.16, 1, 0.3, 1); }
   .contact[data-reveal-state='pending'] > .section-container > * { opacity: 0; transform: translateY(-22px); }
   .contact[data-reveal-state='visible'] > .section-container > * { opacity: 1; transform: translateY(0); }
-  .contact[data-reveal-state] .contact-logo { transition-delay: 440ms; }
-  .contact[data-reveal-state] h2 { transition-delay: 580ms; }
-  .contact[data-reveal-state] .contact-description { transition-delay: 720ms; }
-  .contact[data-reveal-state] .contact-actions { transition-delay: 860ms; }
+  .contact[data-reveal-state] .contact-logo { transition-delay: 600ms; }
+  .contact[data-reveal-state] h2 { transition-delay: 800ms; }
+  .contact[data-reveal-state] .contact-description { transition-delay: 1000ms; }
+  .contact[data-reveal-state] .contact-actions { transition-delay: 1200ms; }
   .contact:focus-within > .section-container > * { opacity: 1; transform: none; transition-delay: 0ms; }
 }
 .contact-description { max-width: 520px; margin: 26px auto 34px; color: #94a3bc; font-size: 15px; line-height: 1.65; }

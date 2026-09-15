@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { strands, coreBranches } from './strand.data'
-import type { EnergyPulse } from '../../types/hero.types'
+import { strands, coreBranches } from '../components/hero/sub/strand/strand.data'
+import type { EnergyPulse } from '../components/hero/types/hero.types'
 
 export function useEnergyPulses() {
   const [pulses, setPulses] = useState<EnergyPulse[]>([])
