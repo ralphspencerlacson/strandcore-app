@@ -19,14 +19,15 @@ export default function StrandLine({
   return (
     <motion.path
       className="strand-line"
-      d={strandPath(index, true)}
+      mask={`url(#strand-entry-mask-${index})`}
+      d={strandPath(index)}
       stroke={`url(#${strands[index].copper ? 'copper' : 'blue'}-strand)`}
       strokeWidth="4"
       initial={{ pathLength: 0 }}
       animate={{ pathLength: draw ? 1 : 0 }}
       transition={{
-        duration: reducedMotion ? 0 : 0.85,
-        delay: draw && !reducedMotion ? index * 0.07 : 0,
+        duration: reducedMotion ? 0 : 1.6,
+        delay: draw && !reducedMotion ? index * 0.1 : 0,
         ease: 'easeInOut',
       }}
       onAnimationComplete={

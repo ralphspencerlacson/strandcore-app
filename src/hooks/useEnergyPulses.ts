@@ -19,7 +19,7 @@ export function useEnergyPulses() {
               ? index === 3
               : index === branchIndex % 3,
           )
-        const flightTime = 0.72
+        const flightTime = 1.2
         const circuitFlightTime = 0.26
         const now = performance.now()
         const pulse: EnergyPulse = {

@@ -23,9 +23,9 @@
 
 .landing-hero {
   position: relative;
-  min-height: calc(100svh - 76px);
+  min-height: min(780px, calc(100svh - 76px));
   display: grid;
-  align-items: center;
+  align-items: start;
 }
 
 .landing-hero::before {

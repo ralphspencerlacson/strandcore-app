@@ -51,6 +51,7 @@ function EnergyChannel({ pulse }: { pulse: EnergyPulse }) {
     <g className="energy-channel" data-channel={index} data-pulse={pulse.id}>
       <motion.path
         className="energy-shine"
+        mask={`url(#strand-entry-mask-${index})`}
         d={strandPath(index)}
         pathLength={1}
         stroke={strand.copper ? '#ffe0b8' : '#d4f2ff'}

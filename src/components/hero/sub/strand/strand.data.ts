@@ -21,8 +21,8 @@ export const coreBranches = [
 ]
 
 export const strands = [
-  { startX: 0, y: 92 },
-  { startX: 20, y: 155 },
-  { startX: 10, y: 244 },
-  { startX: 28, y: 309, copper: true },
+  { startX: -165, y: 92 },
+  { startX: -110, y: 155 },
+  { startX: -145, y: 244 },
+  { startX: -85, y: 309, copper: true },
 ]

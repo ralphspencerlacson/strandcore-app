@@ -21,28 +21,45 @@ export default function StrandGraphic({
     <div className="strands" aria-hidden="true">
       <svg className="strand-network" viewBox="0 0 720 400" fill="none">
         <defs>
+          {strands.map(({ startX }, index) => (
+            <g key={index}>
+              <linearGradient id={`strand-entry-fade-${index}`} x1={startX} y1="0" x2={startX + 60} y2="0" gradientUnits="userSpaceOnUse">
+                <stop stopColor="black" />
+                <stop offset="0.2" stopColor="#101010" />
+                <stop offset="0.6" stopColor="#707070" />
+                <stop offset="1" stopColor="white" />
+              </linearGradient>
+              <mask id={`strand-entry-mask-${index}`} x="-180" y="-20" width="920" height="440" maskUnits="userSpaceOnUse" style={{ maskType: 'luminance' }}>
+                <rect x="-180" y="-20" width="920" height="440" fill={`url(#strand-entry-fade-${index})`} />
+              </mask>
+            </g>
+          ))}
           <linearGradient
             id="blue-strand"
-            x1="0"
+            x1="-180"
             y1="200"
             x2="510"
             y2="200"
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor="#619bf2" stopOpacity="0" />
-            <stop offset="0.35" stopColor="#619bf2" stopOpacity="0.75" />
+            <stop offset="0.1" stopColor="#619bf2" stopOpacity="0.2" />
+            <stop offset="0.38" stopColor="#619bf2" stopOpacity="0.45" />
+            <stop offset="0.6" stopColor="#619bf2" stopOpacity="0.75" />
             <stop offset="1" stopColor="#91baff" />
           </linearGradient>
           <linearGradient
             id="copper-strand"
-            x1="0"
+            x1="-180"
             y1="310"
             x2="510"
-            y2="200"
+            y2="310"
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor="#d9956c" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#d9956c" stopOpacity="0.85" />
+            <stop offset="0.1" stopColor="#d9956c" stopOpacity="0.2" />
+            <stop offset="0.38" stopColor="#d9956c" stopOpacity="0.45" />
+            <stop offset="0.65" stopColor="#d9956c" stopOpacity="0.85" />
             <stop offset="1" stopColor="#e9ad86" />
           </linearGradient>
         </defs>

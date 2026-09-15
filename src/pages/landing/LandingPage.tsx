@@ -10,10 +10,12 @@ import Team from '../../components/team/Team'
 import Contact, { Footer } from '../../components/contact/Contact'
 import { landingStats } from './data/landing.data'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
+import { useScrollToTopOnReload } from '../../hooks/useScrollToTopOnReload'
 import './styles/LandingPage.css'
 import './styles/ScrollMotion.css'
 
 export default function LandingPage() {
+  useScrollToTopOnReload()
   const [phase, setPhase] = useState<HeroPhase>('loading')
   const reducedMotion = Boolean(useReducedMotion())
   const landingRef = useScrollReveal(reducedMotion)

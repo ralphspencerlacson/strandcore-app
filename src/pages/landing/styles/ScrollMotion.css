@@ -9,13 +9,7 @@
   [data-reveal-state='pending']:not(.contact) { opacity: 0; transform: translateY(22px); }
   [data-reveal-state='visible']:not(.contact) { opacity: 1; transform: translateY(0); }
 
-  .quality-strands path { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 1.6s cubic-bezier(0.4, 0, 0.2, 1) 240ms; }
-  .quality-strands path:nth-child(2) { transition-delay: 350ms; }
-  .quality-strands path:nth-child(3) { transition-delay: 460ms; }
-  .quality-strands path:nth-child(4) { transition-delay: 570ms; }
-  [data-reveal-state='pending'] .quality-strands path { stroke-dashoffset: 1; }
-
-  .button, .quality-audit-link, .nav-project { transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
+  .button, .nav-project { transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
   .button-primary span, .nav-project span { transition: transform 180ms ease; }
   .nav-links a { transition: color 180ms ease; }
 }
