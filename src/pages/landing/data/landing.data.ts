@@ -1,4 +1,4 @@
-import type { HeroStat } from '../../components/hero'
+import type { HeroStat } from '../../../components/hero'
 
 export const landingStats: readonly HeroStat[] = [
   { label: 'Team', value: '4 founders' },

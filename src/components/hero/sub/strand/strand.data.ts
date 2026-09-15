@@ -11,7 +11,12 @@ export const coreBranches = [
   { path: 'M522 243 V286 L530 303 V357', x: 530, y: 357, copper: true },
   { path: 'M509 241 V271 L479 301 V382', x: 479, y: 382, copper: true },
   { path: 'M493 232 L471 264 L439 295 V310 L402 348', x: 402, y: 348 },
-  { path: 'M483 220 L457 244 V258 L431 278 H407 L384 316', x: 384, y: 316, copper: true },
+  {
+    path: 'M483 220 L457 244 V258 L431 278 H407 L384 316',
+    x: 384,
+    y: 316,
+    copper: true,
+  },
   { path: 'M485 179 L455 151 H431 L406 126', x: 406, y: 126 },
 ]
 
@@ -21,14 +26,3 @@ export const strands = [
   { startX: 10, y: 244 },
   { startX: 28, y: 309, copper: true },
 ]
-
-export function strandPath(index: number, outward = false) {
-  const { startX, y } = strands[index]
-  const outer = index === 0 || index === 3
-  const flatX = outer ? 180 : 175
-  const bendX = outer ? 335 : 330
-  const coreX = outer ? 298 : 350
-  return outward
-    ? `M520 200 C${coreX} 200 ${bendX} ${y} ${flatX} ${y} H${startX}`
-    : `M${startX} ${y} H${flatX} C${bendX} ${y} ${coreX} 200 520 200`
-}
