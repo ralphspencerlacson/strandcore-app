@@ -2,7 +2,9 @@ import Brand from '../brand/Brand'
 import './Contact.css'
 
 // Set these destinations when the studio's contact details are available.
-const contactDetails: { email?: string; bookingUrl?: string; githubUrl?: string } = {}
+const contactDetails: { email?: string; bookingUrl?: string; githubUrl?: string } = {
+  email: 'inquire@strandcore.tech',
+}
 
 export default function Contact() {
   return (
@@ -27,7 +29,7 @@ export function Footer() {
         <a className="brand-link" href="#top" aria-label="Strandcore home"><Brand /></a>
         <div className="footer-details">
           {contactDetails.email ? <a href={`mailto:${contactDetails.email}`}>{contactDetails.email}</a> : <span className="footer-contact-placeholder">[Your email]</span>}
-          {contactDetails.githubUrl ? <a href={contactDetails.githubUrl}>GitHub</a> : <span className="footer-contact-placeholder">[Your GitHub]</span>}
+          {/* {contactDetails.githubUrl ? <a href={contactDetails.githubUrl}>GitHub</a> : <span className="footer-contact-placeholder">[Your GitHub]</span>} */}
           <span>Metro Manila, PH</span><span>© {new Date().getFullYear()}</span>
         </div>
       </div>
