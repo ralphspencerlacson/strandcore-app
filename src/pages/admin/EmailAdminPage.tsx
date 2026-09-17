@@ -3,6 +3,8 @@ import type { FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { invokeEmail, supabase } from '../../lib/supabase'
 import { budgetLabel } from '../../data/budgets'
+import { splitEmailBody } from '../../lib/email-format'
+import { conversationReference } from '../../../supabase/functions/_shared/conversation'
 import './EmailAdminPage.css'
 
 type Thread = { id: string; contact_name: string; contact_email: string; subject: string; service: string | null; budget: string | null; status: 'open' | 'closed'; updated_at: string }
@@ -63,7 +65,7 @@ export default function EmailAdminPage() {
     finally { setBusy(false) }
   }
 
-  const visible = threads.filter(thread => (filter === 'all' || thread.status === filter) && `${thread.contact_name} ${thread.contact_email} ${thread.subject}`.toLowerCase().includes(search.toLowerCase()))
+  const visible = threads.filter(thread => (filter === 'all' || thread.status === filter) && `${thread.contact_name} ${thread.contact_email} ${thread.subject} ${conversationReference(thread.id)}`.toLowerCase().includes(search.toLowerCase()))
   const active = threads.find(thread => thread.id === selected)
 
   return <main className="mail-app">
@@ -79,7 +81,7 @@ export default function EmailAdminPage() {
       <div className={`mail-workspace${active ? ' has-conversation' : ''}`}><aside className="mail-sidebar" aria-label="Conversations">
         <label className="mail-search">Search conversations<input type="search" placeholder="Name, email or subject" value={search} onChange={event => setSearch(event.target.value)} /></label>
         <div className="mail-filters">{['open', 'closed', 'all'].map(value => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value}</button>)}</div>
-        <div className="mail-thread-list">{visible.map(thread => <button className={`mail-thread ${thread.id === selected ? 'is-active' : ''}`} key={thread.id} onClick={() => setSelected(thread.id)}><span className="mail-thread-top"><strong>{thread.contact_name}</strong><small>{thread.status}</small></span><span>{thread.subject}</span><small>{thread.contact_email}</small><time>{date(thread.updated_at)}</time></button>)}{!loading && !visible.length && <p className="mail-empty">No conversations here yet.</p>}{loading && !threads.length && <p className="mail-empty" role="status">Loading inbox…</p>}</div>
+        <div className="mail-thread-list">{visible.map(thread => <button className={`mail-thread ${thread.id === selected ? 'is-active' : ''}`} key={thread.id} onClick={() => setSelected(thread.id)}><span className="mail-thread-top"><strong>{thread.contact_name}</strong><small>{thread.status}</small></span><span>{thread.subject}</span><span className="mail-reference">{conversationReference(thread.id)}</span><small>{thread.contact_email}</small><time>{date(thread.updated_at)}</time></button>)}{!loading && !visible.length && <p className="mail-empty">No conversations here yet.</p>}{loading && !threads.length && <p className="mail-empty" role="status">Loading inbox…</p>}</div>
         <small className="mail-limit">Showing the latest 500 conversations.</small>
       </aside>{active ? <Conversation key={`${session.user.id}:${active.id}`} thread={active} onUpdate={refresh} onBack={() => setSelected(null)} /> : <section className="mail-welcome"><span aria-hidden="true">↗</span><h2>A good project starts<br />with a conversation.</h2><p>Select an enquiry to read it and reply.</p></section>}</div>
     </>}
@@ -129,11 +131,28 @@ function Conversation({ thread, onUpdate, onBack }: { thread: Thread; onUpdate: 
   }
   return <section className="mail-conversation" aria-label="Selected conversation">
     <button className="mail-back" type="button" onClick={onBack}>← All conversations</button>
-    <div className="mail-conversation-header"><div><span className="mail-eyebrow">{thread.status} CONVERSATION</span><h2>{thread.subject}</h2><p>{thread.contact_name} · {thread.contact_email}</p></div><button disabled={busy} onClick={() => void toggleStatus()}>{thread.status === 'open' ? 'Close conversation' : 'Reopen'}</button></div>
+    <div className="mail-conversation-header"><div><span className="mail-eyebrow">{thread.status} CONVERSATION</span><h2>{thread.subject}</h2><span className="mail-reference">{conversationReference(thread.id)}</span><p>{thread.contact_name} · {thread.contact_email}</p></div><button disabled={busy} onClick={() => void toggleStatus()}>{thread.status === 'open' ? 'Close conversation' : 'Reopen'}</button></div>
     {thread.service && <div className="mail-context"><span>Service: {thread.service}</span><span>Budget: {budgetLabel(thread.budget)}</span></div>}
-    <div className="mail-messages" aria-live="polite">{loading ? <p>Loading conversation…</p> : messages.map(message => <article key={message.id} className={`mail-message ${message.direction}`}><div><strong>{message.direction === 'outbound' ? 'Strandcore' : thread.contact_name}</strong><span>{message.status === 'sent' ? 'Accepted by provider' : message.status === 'pending' ? 'Pending — confirm or retry' : 'Received'}</span></div><p>{message.body}</p><time>{date(message.created_at)}</time>{message.status === 'pending' && <button disabled={busy} onClick={() => void sendReply(message.id, message.body)}>Retry this reply</button>}</article>)}</div>
+    <div className="mail-messages" aria-live="polite">{loading ? <p>Loading conversation…</p> : messages.map(message => <EmailMessage key={message.id} message={message} contactName={thread.contact_name} busy={busy} onRetry={() => void sendReply(message.id, message.body)} />)}</div>
     <form className="mail-composer" onSubmit={reply}><label htmlFor="mail-reply">Reply to {thread.contact_email}</label><textarea id="mail-reply" rows={5} required maxLength={10000} placeholder="Write a thoughtful reply…" value={draft} disabled={busy} onChange={event => { if (attempted.current) { requestId.current = crypto.randomUUID(); attempted.current = false } setDraft(event.target.value) }} />
       {error && <p className="mail-error" role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}<div><small>Replies are sent by email. Client responses return to this conversation.</small><button className="mail-primary" disabled={busy || loading || !draft.trim() || messages.some(message => message.status === 'pending')}>{busy ? 'Working…' : 'Send reply ↗'}</button></div>
     </form>
   </section>
+}
+
+function EmailMessage({ message, contactName, busy, onRetry }: { message: Message; contactName: string; busy: boolean; onRetry: () => void }) {
+  const outbound = message.direction === 'outbound'
+  const name = outbound ? 'Strandcore' : contactName
+  const { content, quoted } = splitEmailBody(message.body)
+  const initials = name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() || '?'
+  return <article className={`mail-message ${message.direction}`} aria-label={`${outbound ? 'Reply from' : 'Email from'} ${name}`}>
+    <header className="mail-message-header">
+      <span className="mail-avatar" aria-hidden="true">{outbound ? 'SC' : initials}</span>
+      <div className="mail-message-sender"><strong>{name}</strong><span>{message.sender}</span></div>
+      <div className="mail-message-meta"><time dateTime={message.created_at}>{date(message.created_at)}</time><span className={`mail-delivery ${message.status}`}>{message.status === 'sent' ? 'Accepted by provider' : message.status === 'pending' ? 'Pending · not confirmed' : 'Received'}</span></div>
+    </header>
+    <div className="mail-message-content">{content}</div>
+    {quoted && <details className="mail-quoted"><summary>Show quoted conversation</summary><div>{quoted}</div></details>}
+    {message.status === 'pending' && <footer className="mail-message-footer"><span>This reply has not been confirmed as sent.</span><button disabled={busy} onClick={onRetry}>Retry this reply</button></footer>}
+  </article>
 }

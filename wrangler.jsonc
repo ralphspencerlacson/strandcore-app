@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "strandcore-app",
+  "account_id": "de51467883ae29853b11bcecb8e332ba",
   "main": "worker/index.ts",
   "compatibility_date": "2026-09-11",
   "observability": {

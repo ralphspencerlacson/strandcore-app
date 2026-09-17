@@ -1,4 +1,5 @@
 import { body, db, endpoint, env, field, HttpError, json, resend, uuid } from '../_shared/common.ts'
+import { conversationSubject } from '../_shared/conversation.ts'
 
 endpoint(async request => {
   const client = db()
@@ -28,7 +29,7 @@ endpoint(async request => {
   if (latestError) throw latestError
   const payload = {
     from: env('EMAIL_FROM'), to: [thread.contact_email],
-    subject: /^re:/i.test(thread.subject) ? thread.subject : `Re: ${thread.subject}`,
+    subject: conversationSubject(thread.subject, threadId),
     text, reply_to: `reply+${threadId}@${env('EMAIL_REPLY_DOMAIN')}`,
     ...(latest?.message_id ? { headers: { 'In-Reply-To': latest.message_id, References: latest.message_id } } : {}),
   }
