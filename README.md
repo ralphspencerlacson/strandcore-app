@@ -1,5 +1,7 @@
 # React + TypeScript + Vite
 
+Email management, Supabase SQL, Edge Functions, admin provisioning, and deployment instructions: [supabase/README.md](supabase/README.md).
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

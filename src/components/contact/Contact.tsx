@@ -1,10 +1,6 @@
 import Brand from '../brand/Brand'
+import { contactDetails } from '../../data/contact'
 import './Contact.css'
-
-// Set these destinations when the studio's contact details are available.
-const contactDetails: { email?: string; bookingUrl?: string; githubUrl?: string } = {
-  email: 'inquire@strandcore.tech',
-}
 
 export default function Contact() {
   return (
@@ -14,8 +10,8 @@ export default function Contact() {
         <h2 id="contact-title">Start with a 30-minute call.</h2>
         <p className="contact-description">No deck, no discovery fee for the first conversation.<span className="contact-desktop"> Bring the problem — we’ll tell you honestly whether it’s a build, a buy, or a spreadsheet that’s fine as it is.</span></p>
         <div className="contact-actions">
-          {contactDetails.bookingUrl ? <a className="button button-primary" href={contactDetails.bookingUrl}>Book a call <span aria-hidden="true">→</span></a> : <button className="button button-primary" type="button" disabled>Book a call <span aria-hidden="true">→</span></button>}
-          {contactDetails.email ? <a className="button button-secondary" href={`mailto:${contactDetails.email}`}>{contactDetails.email}</a> : <button className="button button-secondary" type="button" disabled>[Your email]</button>}
+          <a className="button button-primary" href={contactDetails.bookingUrl ?? '/contact'}>Book a call <span aria-hidden="true">→</span></a>
+          <a className="button button-secondary" href="/contact" aria-label="Open the contact form">{contactDetails.email ?? 'Tell us about your project'}</a>
         </div>
       </div>
     </section>
@@ -26,7 +22,7 @@ export function Footer() {
   return (
     <footer className="site-footer">
       <div className="section-container footer-content">
-        <a className="brand-link" href="#top" aria-label="Strandcore home"><Brand /></a>
+        <a className="brand-link" href="/#top" aria-label="Strandcore home"><Brand /></a>
         <div className="footer-details">
           {contactDetails.email ? <a href={`mailto:${contactDetails.email}`}>{contactDetails.email}</a> : <span className="footer-contact-placeholder">[Your email]</span>}
           {/* {contactDetails.githubUrl ? <a href={contactDetails.githubUrl}>GitHub</a> : <span className="footer-contact-placeholder">[Your GitHub]</span>} */}

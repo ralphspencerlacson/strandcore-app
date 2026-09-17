@@ -1,0 +1,10 @@
+[functions.contact-submit]
+verify_jwt = false
+
+# The handler validates the access token with Auth and checks email_admins.
+[functions.email-admin]
+verify_jwt = false
+
+# Resend authenticates this endpoint using its signed webhook payload.
+[functions.email-inbound]
+verify_jwt = false

@@ -11,8 +11,8 @@
 .site-header.is-scrolled { background: #06090eeb; backdrop-filter: blur(16px); box-shadow: 0 8px 32px #00000026; }
 .nav-links a:not(.nav-project) { position: relative; }
 .nav-links a:not(.nav-project)::after { content: ''; position: absolute; left: 0; right: 0; bottom: -9px; height: 1px; background: #609cfa; transform: scaleX(0); transform-origin: left; transition: transform 220ms ease; }
-.nav-links a[aria-current='location'] { color: #edf4ff; }
-.nav-links a[aria-current='location']::after { transform: scaleX(1); }
+.nav-links a[aria-current] { color: #edf4ff; }
+.nav-links a[aria-current]::after { transform: scaleX(1); }
 @media (prefers-reduced-motion: no-preference) {
   .site-header:not(.is-loading)::after {
     content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px; pointer-events: none;

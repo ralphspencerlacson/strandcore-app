@@ -1,0 +1,97 @@
+.contact-page { min-height: calc(100svh - 170px); background: #06090e; }
+.contact-page-container { width: 88%; max-width: 1180px; margin-inline: auto; }
+.contact-page-intro { padding: 66px 0 60px; border-bottom: 1px solid #1b2230; background: radial-gradient(ellipse at 85% 0, #07387966, transparent 55%), linear-gradient(#7c96bc06 1px, transparent 1px), linear-gradient(90deg, #7c96bc06 1px, transparent 1px); background-size: auto, 56px 56px, 56px 56px; }
+.contact-breadcrumb { display: flex; gap: 12px; margin-bottom: 24px; color: #609cfa; text-transform: uppercase; font: 9px/1.5 Consolas, monospace; letter-spacing: 1.6px; }
+.contact-breadcrumb a { color: #8290a7; text-decoration: none; }
+.contact-breadcrumb > span:not([aria-current]) { color: #47556a; }
+.contact-page-intro h1 { margin: 0; font-size: clamp(34px, 4vw, 56px); line-height: 1.1; letter-spacing: -0.05em; }
+.contact-page-intro p { max-width: 590px; color: #a9b3c5; font-size: 16px; line-height: 1.8; margin: 20px 0 0; }
+.contact-page-body { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); align-items: start; gap: 56px; padding-block: 64px 80px; }
+.project-brief { display: grid; gap: 24px; }
+.brief-identity { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.project-brief label, .contact-info-card h2, .brief-booking h3 { color: #829abf; text-transform: uppercase; font: 9px/1.5 Consolas, monospace; letter-spacing: 1.4px; }
+.project-brief input, .project-brief select, .project-brief textarea { display: block; width: 100%; min-width: 0; margin-top: 9px; padding: 13px 15px; border: 1px solid #263044; border-radius: 0; background: #0b111c; color: #e9eef7; font: 13px/1.6 Inter, 'Segoe UI', sans-serif; letter-spacing: normal; text-transform: none; }
+.project-brief input, .project-brief select { min-height: 46px; }
+.project-brief textarea { resize: vertical; min-height: 156px; }
+.project-brief input::placeholder, .project-brief textarea::placeholder { color: #657590; opacity: 1; }
+.project-brief select { cursor: pointer; }
+.contact-page :is(input, select, textarea, button, a):focus-visible { outline: 2px solid #609cfa; outline-offset: 4px; }
+.brief-optional { margin-left: 6px; color: #667389; font-size: 8px; }
+.brief-service-options { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.brief-service-options button { padding: 5px 8px; border: 1px solid #232e40; color: #94a3bc; background: transparent; font: 8px/1.5 Consolas, monospace; letter-spacing: 0.4px; }
+.brief-service-options button[aria-pressed='true'] { border-color: #609cfa88; background: #609cfa14; color: #bdd5ff; }
+.brief-service-options .brief-qa-chip { color: #df9569; border-color: #644532; }
+.brief-service-options .brief-qa-chip[aria-pressed='true'] { background: #e68e5814; border-color: #e68e58; color: #efb48d; }
+.brief-submit-row { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; }
+.brief-submit-row > span, .brief-preview-note { color: #8290a7; font-size: 12px; line-height: 1.6; }
+.brief-preview-note { margin: -10px 0 0; }
+.contact-page .button { min-height: 48px; }
+.contact-page-aside { display: grid; gap: 16px; }
+.contact-info-card { padding: 26px; border: 1px solid #202938; background: #0b111c; }
+.contact-info-card h2 { margin: 0 0 22px; color: #8db6fa; }
+.contact-next-steps { list-style: none; counter-reset: next; padding: 0; margin: 0; display: grid; gap: 22px; }
+.contact-next-steps li { counter-increment: next; display: grid; grid-template-columns: 22px 1fr; gap: 15px; color: #c0cce0; font-size: 13px; line-height: 1.7; }
+.contact-next-steps li::before { content: counter(next, decimal-leading-zero); font: 9px/1.8 Consolas, monospace; color: #7fa9ed; }
+.contact-book-call { width: 100%; padding: 14px; display: flex; justify-content: center; gap: 12px; border: 1px solid #334059; background: transparent; color: #dfe9f8; font-size: 12px; font-weight: 600; }
+.contact-page button:disabled { cursor: not-allowed; }
+.contact-booking-note { margin: 10px 0 0; color: #8290a7; font-size: 11px; }
+.contact-facts { display: grid; gap: 9px; margin: 22px 0 0; padding-top: 20px; border-top: 1px solid #1d2737; }
+.contact-facts > div { display: grid; grid-template-columns: 68px 1fr; gap: 12px; }
+.contact-facts dt { color: #8290a7; font: 9px/1.7 Consolas, monospace; text-transform: uppercase; letter-spacing: 1px; }
+.contact-facts dd { margin: 0; color: #bccce4; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.contact-facts dd a { color: inherit; text-decoration: none; }
+.contact-facts dd a:hover { text-decoration: underline; }
+.contact-overseas { margin: 0 3px; color: #8290a7; font-size: 12px; line-height: 1.7; }
+.brief-qa-notice { display: flex; gap: 12px; margin: 0; padding: 14px; color: #efb48d; border: 1px solid #503321; background: #1a120d; font-size: 12px; line-height: 1.7; }
+.project-brief-qa #brief-service { border-color: #995e3a; background: #160f0b; color: #efb48d; }
+.project-brief-qa .button-primary { background: #e68e58; border-color: #e68e58; color: #170f0a; }
+.brief-confirmation { border: 1px solid #263044; padding: 40px 32px; text-align: center; background: radial-gradient(ellipse at 50% 0, #07387977, transparent 55%), #0b111c; }
+.brief-confirmation-icon { display: grid; place-items: center; width: 56px; height: 56px; margin: 0 auto 24px; border-radius: 50%; color: #609cfa; border: 1px solid #37609c; font-size: 24px; }
+.brief-confirmation h2 { font-size: 28px; letter-spacing: -0.04em; margin: 0 0 18px; }
+.brief-confirmation > p { color: #a9b3c5; font-size: 14px; line-height: 1.8; margin: 0; }
+.brief-booking { text-align: left; padding: 24px; margin-top: 30px; background: #101827; border: 1px solid #263044; }
+.brief-booking h3 { margin: 0 0 14px; color: #609cfa; }
+.brief-booking p { color: #b9c7dc; font-size: 13px; line-height: 1.6; }
+.brief-booking .button { width: 100%; justify-content: center; }
+.brief-booking small { display: block; color: #8290a7; font-size: 11px; margin-top: 12px; }
+.brief-edit { border: 0; background: none; color: #9fbeef; font-size: 12px; margin-top: 26px; padding: 8px; }
+.brief-column { min-width: 0; }
+.contact-page-intro .contact-page-container { animation: contact-arrive .55s cubic-bezier(.2,.7,.2,1) both; }
+.project-brief > * { animation: contact-arrive .45s cubic-bezier(.2,.7,.2,1) both; }
+.project-brief > :nth-child(2) { animation-delay: .05s; }
+.project-brief > :nth-child(3) { animation-delay: .1s; }
+.project-brief > :nth-child(4) { animation-delay: .15s; }
+.project-brief > :nth-child(5) { animation-delay: .2s; }
+.contact-page-aside { animation: contact-arrive .6s .12s cubic-bezier(.2,.7,.2,1) both; }
+.project-brief :is(input, select, textarea) { transition: border-color .2s, background-color .2s, box-shadow .2s; }
+.project-brief :is(input, select, textarea):hover { border-color: #455a79; }
+.project-brief :is(input, select, textarea):focus { border-color: #78a9f5; box-shadow: 0 0 0 3px #609cfa12; }
+.project-brief label { transition: color .2s; }
+.project-brief label:focus-within { color: #b7d0f7; }
+.brief-service-options button { transition: color .2s, background-color .2s, border-color .2s, transform .2s; }
+.brief-service-options button:hover { transform: translateY(-2px); border-color: #6e95cc; background: #609cfa0d; }
+.brief-service-options button:active { transform: translateY(0); }
+.brief-submit-row .button { transition: background-color .2s, border-color .2s, box-shadow .2s, transform .2s; }
+.brief-submit-row .button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 24px #609cfa25; }
+.brief-submit-row .button:active:not(:disabled) { transform: translateY(0); }
+.brief-submit-row .button:disabled { opacity: .65; }
+.brief-submit-row .button span { display: inline-block; transition: transform .2s; }
+.brief-submit-row .button:hover:not(:disabled) span { transform: translateX(4px); }
+.brief-confirmation-icon { animation: contact-confirm .45s .1s cubic-bezier(.2,.7,.2,1) both; }
+.brief-edit { transition: color .2s, background-color .2s; }
+.brief-edit:hover { color: #d0e3ff; background: #609cfa0d; }
+@keyframes contact-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes contact-confirm { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .contact-page *, .contact-page *::before { animation: none !important; transition: none !important; } }
+@media (max-width: 900px) { .contact-page-body { gap: 28px; } .contact-info-card { padding: 22px; } .brief-identity { grid-template-columns: 1fr; gap: 24px; } }
+@media (max-width: 700px) {
+  .contact-page-container { width: auto; margin-inline: 24px; }
+  .contact-page-intro { padding: 40px 0; }
+  .contact-page-intro h1 { font-size: 36px; }
+  .contact-page-intro p { font-size: 14px; }
+  .contact-page-body { grid-template-columns: minmax(0, 1fr); padding-block: 36px 52px; gap: 36px; }
+  .brief-submit-row .button { width: 100%; justify-content: center; }
+  .brief-submit-row { gap: 12px; }
+  .brief-confirmation { padding: 30px 20px; }
+  .brief-booking { padding: 20px; }
+}
