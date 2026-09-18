@@ -15,6 +15,7 @@
 }
 
 .landing {
+  font-weight: 500;
   min-height: 100svh;
   overflow: hidden;
   position: relative;
@@ -56,12 +57,12 @@
   margin: 0 0 18px;
   color: #609cfa;
   text-transform: uppercase;
-  font: 10px/1.5 Consolas, 'Courier New', monospace;
+  font: 600 0.75rem/1.5 Consolas, 'Courier New', monospace;
   letter-spacing: 1.8px;
 }
 .landing-section h2 { margin: 0; font-size: clamp(28px, 3vw, 40px); line-height: 1.08; letter-spacing: -0.045em; font-weight: 750; }
 @media (max-width: 600px) {
   .landing-section { padding: 52px 24px; }
-  .section-label { font-size: 9px; margin-bottom: 16px; }
+  .section-label { font-size: 0.75rem; margin-bottom: 16px; }
   .landing-section h2 { font-size: clamp(26px, 6.9vw, 34px); line-height: 1.08; }
 }

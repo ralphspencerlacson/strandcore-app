@@ -4,7 +4,7 @@ The app now has a working Supabase integration boundary and an inbox at `/admin/
 
 ## 1. Database
 
-Run the complete contents of `supabase/migrations/202609170001_email_management.sql` in the Supabase SQL Editor, once. Alternatively link the Supabase CLI project and run `supabase db push`.
+For a new project, run the SQL files in `supabase/migrations` in filename order. For an existing project, apply only unapplied migrations. `202609170002_remove_contact_rate_limit.sql` removes the contact submission limit. Alternatively, with migration history aligned, link the Supabase CLI project and run `supabase db push`.
 
 This creates conversations, messages, admin membership, RLS policies, and transactional functions for contact submissions and inbound emails. Anonymous clients cannot read the inbox or write these tables directly. Only explicitly provisioned admin users can read it; all mutations pass through server validation.
 
@@ -32,7 +32,7 @@ Verify a sending domain in Resend and enable a receiving domain. A dedicated rec
 
 The public address and configured sender are `inquire@strandcore.tech`. Keep its existing Cloudflare routing in place. The example uses `reply.strandcore.tech` as a separate Resend receiving domain; configure that subdomain before using it. Verify `strandcore.tech` for sending in Resend. Email arriving at the existing Cloudflare address will continue following its Cloudflare routing rule, and will not automatically appear in this app. To include those new enquiries in the app, forward that rule to the verified Resend receiving address `inquire@reply.strandcore.tech`. Outgoing app replies already direct client responses to the conversation-specific address on the receiving subdomain.
 
-Copy `supabase/.env.example` to `supabase/.env.local` and fill in all values. `EMAIL_FROM` is the verified sender; `EMAIL_REPLY_DOMAIN` is the receiving domain; `EMAIL_INBOUND_ADDRESS` accepts new conversations. Set exact production and local origins in `ALLOWED_ORIGINS`. Generate a long random `CONTACT_RATE_SALT`.
+Copy `supabase/.env.example` to `supabase/.env.local` and fill in all values. `EMAIL_FROM` is the verified sender; `EMAIL_REPLY_DOMAIN` is the receiving domain; `EMAIL_INBOUND_ADDRESS` accepts new conversations. Set exact production and local origins in `ALLOWED_ORIGINS`. The contact function no longer requires `CONTACT_RATE_SALT`.
 
 ```sh
 supabase login
@@ -78,7 +78,7 @@ npm run build
 npx --yes deno check --node-modules-dir=none --no-lock supabase/functions/contact-submit/index.ts supabase/functions/email-admin/index.ts supabase/functions/email-inbound/index.ts
 ```
 
-The database tests run the migration in embedded PostgreSQL and exercise role permissions, rate limits, idempotency, and incoming conversation routing. The location tests cover PH, non-PH, missing country metadata, and the exact budget ranges.
+The database tests run the migrations in embedded PostgreSQL and exercise role permissions, submissions beyond the former limit, idempotency, and incoming conversation routing. The location tests cover PH, non-PH, missing country metadata, and the exact budget ranges.
 
 1. Submit a contact brief and verify one conversation exists. Retry the same request ID and verify it does not duplicate.
 2. Sign in at `/admin/email`. Confirm a different Auth user cannot read conversations or invoke admin actions.
@@ -87,6 +87,12 @@ The database tests run the migration in embedded PostgreSQL and exercise role pe
 5. Test a provider failure. The reply remains pending with a retry button; retries reuse the same immutable payload and idempotency key. After 23 hours, inspect Resend manually rather than risking a duplicate beyond its 24-hour key retention.
 6. Check `/api/location` from PH and non-PH connections and both sets of budget options. When detection fails or times out, confirm the budget selector becomes available with USD ranges.
 
-The contact endpoint limits each hashed gateway IP to five submissions per hour. Shared networks share that allowance. Add a CAPTCHA if public abuse requires stronger protection. The inbox currently loads the latest 500 conversations and refreshes on request; it is not a realtime mailbox client.
+The contact endpoint has no application-level per-IP submission limit. Input validation, admin permissions, and duplicate-request protection remain enabled. The inbox currently loads the latest 500 conversations and refreshes on request; it is not a realtime mailbox client.
 
 References: [Supabase Auth validation](https://supabase.com/docs/reference/javascript/auth-getuser), [Resend receiving](https://resend.com/docs/dashboard/receiving/introduction), [Resend reply threading](https://resend.com/docs/dashboard/receiving/reply-to-emails), [Resend idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys), [Cloudflare request metadata](https://developers.cloudflare.com/workers/runtime-apis/request/).
+
+### Submission confirmation and CC
+
+New contact submissions save the enquiry and send a confirmation to the customer's address with `inquire@strandcore.tech` in CC. New admin replies include the same CC. Reply-To remains the conversation alias, so customer replies return to Email Management. Customers should use Reply all to retain CC recipients; a normal reply does not automatically copy them. Existing pending messages retain their original recipient payload for safe retries.
+
+Confirmation emails are stored as outbound pending/sent messages. Retrying the same form submission reuses the frozen payload and the same Resend idempotency key as an admin retry of that pending confirmation. After 23 hours, reconcile an uncertain send manually rather than risk a duplicate. No historical enquiries are emailed automatically.

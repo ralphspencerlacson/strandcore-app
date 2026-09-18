@@ -97,3 +97,16 @@ html:has(.mail-app) { scrollbar-gutter: auto; }
 @media (max-height: 650px) { .mail-header { height: 46px; } .mail-title { padding-block: 9px; } .mail-title .mail-eyebrow { display: none; } .mail-title h1 { margin: 0; font-size: 24px; } .mail-conversation-header { padding-block: 10px; } .mail-conversation-header .mail-eyebrow { display: none; } .mail-conversation-header h2 { margin: 0 0 5px; } .mail-context { padding-block: 6px; } .mail-composer { padding-block: 10px; } .mail-composer textarea { height: 54px; margin-top: 6px; } .mail-composer > div { margin-top: 6px; } }
 @media (prefers-reduced-motion: reduce) { .mail-app *, .mail-app *::before { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 @media (max-width: 700px) { .mail-message { max-width: 100%; padding: 0; } .mail-message-header { padding: 12px; flex-wrap: wrap; gap: 10px; } .mail-message-sender { flex: 1; } .mail-message-meta { width: 100%; display: flex; justify-content: space-between; align-items: center; } .mail-message-content { padding: 16px; font-size: 13px; } .mail-quoted { margin-inline: 16px; } .mail-message-footer { padding: 12px; flex-wrap: wrap; } }
+/* Compact conversation navigation without reducing readable text sizes. */
+.mail-app .mail-thread { gap: 6px; padding: 12px; }
+.mail-thread-top strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-thread-subject { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail-thread-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mail-thread-bottom time { padding: 0; }
+.mail-thread-bottom small { text-transform: capitalize; }
+.mail-unread { flex-shrink: 0; min-width: 22px; height: 22px; padding: 2px 6px; display: inline-flex; align-items: center; justify-content: center; border-radius: 20px; background: #609cfa; color: #071526; font-size: 12px; font-weight: 700; }
+.mail-conversation-header { padding-block: 14px; }
+.mail-conversation-header h2 { margin-block: 5px; }
+.mail-conversation-header p { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-block: 6px 0; }
+.mail-conversation-header .mail-reference { display: inline; }
+@media (min-width: 701px) { .mail-workspace { grid-template-columns: 260px minmax(0, 1fr); } }

@@ -1,9 +1,9 @@
 .site-header { position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #1b2230; background: #06090ef5; }
 .site-nav { display: flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 76px; max-width: 1440px; margin-inline: auto; padding: 16px 6%; }
 .nav-links { display: flex; align-items: center; gap: 26px; }
-.nav-links a { color: #94a3bc; text-decoration: none; font-size: 12px; }
+.nav-links a { color: #bdc9dc; text-decoration: none; font-size: 0.9375rem; font-weight: 600; }
 .nav-links a:hover { color: #fff; }
-.nav-links .nav-project { display: inline-flex; align-items: center; justify-content: center; gap: 20px; padding: 13px 20px; color: #081427; background: #609cfa; font: 9px/1.4 Consolas, 'Courier New', monospace; text-transform: uppercase; letter-spacing: 1.3px; }
+.nav-links .nav-project { display: inline-flex; align-items: center; justify-content: center; gap: 20px; padding: 13px 20px; color: #081427; background: #609cfa; font: 600 0.75rem/1.4 Consolas, 'Courier New', monospace; text-transform: uppercase; letter-spacing: 1.3px; }
 .nav-toggle { display: none; }
 .site-header a:focus-visible { outline: 2px solid #b8d2ff; outline-offset: 5px; }
 .site-header { transition: opacity 560ms ease, transform 560ms cubic-bezier(0.22, 1, 0.36, 1), background-color 220ms ease, box-shadow 220ms ease; }
@@ -47,12 +47,12 @@
   .site-header, .nav-links a:not(.nav-project)::after { transition: none; }
   .site-header.is-loading { transform: none; }
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .site-nav { min-height: 64px; padding: 12px 24px; flex-wrap: wrap; gap: 0; }
-  .nav-toggle { display: flex; align-items: center; gap: 16px; padding: 10px 12px; border: 1px solid #232a37; background: transparent; color: #bdc7d8; font: 11px/1.5 Consolas, monospace; }
+  .nav-toggle { display: flex; align-items: center; gap: 16px; padding: 10px 12px; border: 1px solid #232a37; background: transparent; color: #bdc7d8; font: 600 0.75rem/1.5 Consolas, monospace; }
   .nav-links { display: none; flex-basis: 100%; padding: 18px 0 8px; gap: 0; }
   .nav-links.is-open { display: flex; flex-direction: column; align-items: stretch; }
-  .nav-links a { padding: 14px 12px; }
+  .nav-links a { padding: 14px 12px; font-size: 1rem; }
   .nav-links .nav-project { margin-top: 12px; }
   .nav-links a:not(.nav-project)::after { left: 12px; right: auto; width: 24px; bottom: 6px; }
 }

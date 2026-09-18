@@ -1,4 +1,5 @@
 import { body, db, endpoint, env, field, HttpError, json, resend, uuid } from '../_shared/common.ts'
+import { conversationCc } from '../_shared/email-copy.ts'
 import { conversationSubject } from '../_shared/conversation.ts'
 
 endpoint(async request => {
@@ -28,7 +29,7 @@ endpoint(async request => {
     .eq('direction', 'inbound').not('message_id', 'is', null).order('created_at', { ascending: false }).limit(1).maybeSingle()
   if (latestError) throw latestError
   const payload = {
-    from: env('EMAIL_FROM'), to: [thread.contact_email],
+    from: env('EMAIL_FROM'), to: [thread.contact_email], cc: conversationCc(thread.contact_email),
     subject: conversationSubject(thread.subject, threadId),
     text, reply_to: `reply+${threadId}@${env('EMAIL_REPLY_DOMAIN')}`,
     ...(latest?.message_id ? { headers: { 'In-Reply-To': latest.message_id, References: latest.message_id } } : {}),

@@ -25,22 +25,22 @@
 .quality-story { display: grid; grid-template-columns: 1.15fr 1fr; align-items: end; gap: 80px; }
 .quality .section-label { color: #e68e58; }
 .quality-story h2 { max-width: 550px; }
-.quality-description { max-width: 490px; margin: 0; color: #94a3bc; font-size: 14px; line-height: 1.8; }
+.quality-description { max-width: 490px; margin: 0; color: #bdc9dc; font-size: 1rem; line-height: 1.8; }
 .quality-checklist { border: 1px solid #29303b; background: linear-gradient(145deg, #111720, #0b1017 55%); box-shadow: 0 20px 60px #00000018; }
 .quality-checklist-header { padding: 28px 28px 24px; border-bottom: 1px solid #29303b; position: relative; }
 .quality-checklist-header::before { content: ''; position: absolute; top: -1px; left: 28px; width: 48px; height: 2px; background: #e68e58; }
 .quality-checklist .section-label { margin-bottom: 12px; }
 .quality-checklist-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .quality-checklist-heading h3 { font-size: 23px; line-height: 1.2; letter-spacing: -0.04em; margin: 0; }
-.quality-check-count { flex-shrink: 0; color: #a2afc1; font: 9px/1.5 Consolas, monospace; letter-spacing: 1px; text-transform: uppercase; }
+.quality-check-count { flex-shrink: 0; color: #a2afc1; font: 600 0.75rem/1.5 Consolas, monospace; letter-spacing: 1px; text-transform: uppercase; }
 .quality-checklist ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0; margin: 0; list-style: none; }
 .quality-checklist li { display: grid; grid-template-columns: 22px minmax(0, 1fr) 22px; align-items: start; gap: 14px; padding: 26px 28px; }
 .quality-checklist li:nth-child(even) { border-left: 1px solid #202833; }
 .quality-checklist li:nth-child(n + 3) { border-top: 1px solid #202833; }
-.quality-check-number { color: #76859b; font: 10px/1.8 Consolas, monospace; }
-.quality-check-copy h4 { color: #e9eef7; font-size: 14px; font-weight: 600; line-height: 1.4; margin: 0 0 5px; }
-.quality-check-copy p { color: #94a3bc; font-size: 12px; line-height: 1.6; margin: 0; }
-.quality-check { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid #b9774c33; border-radius: 50%; background: #b9774c0a; color: #e6a476; font-size: 12px; }
+.quality-check-number { color: #76859b; font: 600 0.75rem/1.8 Consolas, monospace; }
+.quality-check-copy h4 { color: #e9eef7; font-size: 1rem; font-weight: 600; line-height: 1.4; margin: 0 0 5px; }
+.quality-check-copy p { color: #bdc9dc; font-size: 1rem; line-height: 1.6; margin: 0; }
+.quality-check { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid #b9774c33; border-radius: 50%; background: #b9774c0a; color: #e6a476; font-size: 0.875rem; }
 @media (max-width: 900px) {
   .quality-story { gap: 36px; }
   .quality-checklist-header { padding-inline: 22px; }
@@ -49,14 +49,14 @@
 @media (max-width: 600px) {
   .quality-layout { gap: 30px; }
   .quality-story { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .quality-description { font-size: 14px; line-height: 1.65; margin-top: 18px; }
+  .quality-description { font-size: 1rem; line-height: 1.65; margin-top: 18px; }
   .quality .quality-desktop, .quality .desktop-copy { display: none; }
   .quality .mobile-copy { display: block; }
   .quality-checklist-header { padding: 24px 20px 20px; }
   .quality-checklist-header::before { left: 20px; }
-  .quality-checklist-heading { flex-direction: row; align-items: center; gap: 12px; }
+  .quality-checklist-heading { flex-direction: column; align-items: flex-start; gap: 12px; }
   .quality-checklist-heading h3 { font-size: 20px; }
-  .quality-check-count { font-size: 8px; }
+  .quality-check-count { font-size: 0.75rem; }
   .quality-checklist ol { grid-template-columns: minmax(0, 1fr); }
   .quality-checklist li { grid-template-columns: 18px minmax(0, 1fr) 20px; gap: 10px; padding: 20px; }
   .quality-checklist li:nth-child(even) { border-left: 0; }

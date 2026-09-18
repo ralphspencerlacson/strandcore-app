@@ -7,7 +7,7 @@ import { splitEmailBody } from '../../lib/email-format'
 import { conversationReference } from '../../../supabase/functions/_shared/conversation'
 import './EmailAdminPage.css'
 
-type Thread = { id: string; contact_name: string; contact_email: string; subject: string; service: string | null; budget: string | null; status: 'open' | 'closed'; updated_at: string }
+type Thread = { id: string; contact_name: string; contact_email: string; subject: string; service: string | null; budget: string | null; status: 'open' | 'closed'; updated_at: string; unread_count: number }
 type Message = { id: string; direction: 'inbound' | 'outbound'; sender: string; body: string; status: 'received' | 'pending' | 'sent'; created_at: string }
 const date = (value: string) => new Date(value).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 const errorText = (error: unknown) => error instanceof Error ? error.message : 'Something went wrong. Please try again.'
@@ -15,7 +15,7 @@ const errorText = (error: unknown) => error instanceof Error ? error.message : '
 export default function EmailAdminPage() {
   const [session, setSession] = useState<Session | null>(null)
   const [checking, setChecking] = useState(true)
-  const [email, setEmail] = useState('admin@strandcore.com')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -24,6 +24,7 @@ export default function EmailAdminPage() {
   const [selected, setSelected] = useState<string | null>(null)
   const [filter, setFilter] = useState('open')
   const [search, setSearch] = useState('')
+  const refreshVersion = useRef(0)
 
   useEffect(() => {
     document.title = 'Email management — Strandcore'
@@ -35,16 +36,17 @@ export default function EmailAdminPage() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (quiet = false) => {
     if (!supabase || !session) return
-    setLoading(true); setError('')
+    const version = ++refreshVersion.current
+    if (!quiet) { setLoading(true); setError('') }
     try {
       const { data: admin, error: accessError } = await supabase.from('email_admins').select('user_id').eq('user_id', session.user.id).maybeSingle()
       if (accessError) throw accessError
       if (!admin) throw new Error('This account does not have inbox access.')
-      const { data, error: loadError } = await supabase.from('email_threads').select('*').order('updated_at', { ascending: false }).limit(500)
+      const { data, error: loadError } = await supabase.from('email_inbox').select('*').order('updated_at', { ascending: false }).limit(500)
       if (loadError) throw loadError
-      setThreads(data || [])
+      if (version === refreshVersion.current) setThreads(data || [])
     } catch (err) { setError(errorText(err)) }
     finally { setLoading(false) }
   }, [session])
@@ -52,6 +54,19 @@ export default function EmailAdminPage() {
   // Fetching on a session change intentionally resets the loading indicator.
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { void refresh() }, [refresh])
+
+  useEffect(() => {
+    if (!supabase || !session) return
+    let timer: ReturnType<typeof setTimeout>
+    const reload = () => { clearTimeout(timer); timer = setTimeout(() => void refresh(true), 200) }
+    const channel = supabase.channel('email-inbox-' + session.user.id)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'email_threads' }, reload)
+      .subscribe(status => { if (status === 'SUBSCRIBED') reload() })
+    const interval = setInterval(() => { if (!document.hidden) reload() }, 15000)
+    const onVisible = () => { if (!document.hidden) reload() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => { clearTimeout(timer); clearInterval(interval); document.removeEventListener('visibilitychange', onVisible); void supabase!.removeChannel(channel) }
+  }, [session, refresh])
 
   async function signIn(event: FormEvent) {
     event.preventDefault()
@@ -81,20 +96,22 @@ export default function EmailAdminPage() {
       <div className={`mail-workspace${active ? ' has-conversation' : ''}`}><aside className="mail-sidebar" aria-label="Conversations">
         <label className="mail-search">Search conversations<input type="search" placeholder="Name, email or subject" value={search} onChange={event => setSearch(event.target.value)} /></label>
         <div className="mail-filters">{['open', 'closed', 'all'].map(value => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value}</button>)}</div>
-        <div className="mail-thread-list">{visible.map(thread => <button className={`mail-thread ${thread.id === selected ? 'is-active' : ''}`} key={thread.id} onClick={() => setSelected(thread.id)}><span className="mail-thread-top"><strong>{thread.contact_name}</strong><small>{thread.status}</small></span><span>{thread.subject}</span><span className="mail-reference">{conversationReference(thread.id)}</span><small>{thread.contact_email}</small><time>{date(thread.updated_at)}</time></button>)}{!loading && !visible.length && <p className="mail-empty">No conversations here yet.</p>}{loading && !threads.length && <p className="mail-empty" role="status">Loading inbox…</p>}</div>
+        <div className="mail-thread-list">{visible.map(thread => <button className={`mail-thread ${thread.id === selected ? 'is-active' : ''}`} key={thread.id} onClick={() => setSelected(thread.id)}><span className="mail-thread-top"><strong>{thread.contact_name}</strong>{thread.unread_count > 0 && <span className="mail-unread" aria-label={`${thread.unread_count} unread messages`}>{thread.unread_count}</span>}</span><span className="mail-thread-subject">{thread.subject}</span><span className="mail-thread-bottom"><time>{date(thread.updated_at)}</time><small>{thread.status}</small></span></button>)}{!loading && !visible.length && <p className="mail-empty">No conversations here yet.</p>}{loading && !threads.length && <p className="mail-empty" role="status">Loading inbox…</p>}</div>
         <small className="mail-limit">Showing the latest 500 conversations.</small>
-      </aside>{active ? <Conversation key={`${session.user.id}:${active.id}`} thread={active} onUpdate={refresh} onBack={() => setSelected(null)} /> : <section className="mail-welcome"><span aria-hidden="true">↗</span><h2>A good project starts<br />with a conversation.</h2><p>Select an enquiry to read it and reply.</p></section>}</div>
+      </aside>{active ? <Conversation key={`${session.user.id}:${active.id}`} thread={active} userId={session.user.id} onRead={() => void refresh(true)} onUpdate={refresh} onBack={() => setSelected(null)} /> : <section className="mail-welcome"><span aria-hidden="true">↗</span><h2>A good project starts<br />with a conversation.</h2><p>Select an enquiry to read it and reply.</p></section>}</div>
     </>}
   </main>
 }
 
-function Conversation({ thread, onUpdate, onBack }: { thread: Thread; onUpdate: () => Promise<void>; onBack: () => void }) {
+function Conversation({ thread, userId, onRead, onUpdate, onBack }: { thread: Thread; userId: string; onRead: () => void; onUpdate: () => Promise<void>; onBack: () => void }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
   const [draft, setDraft] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
+  const readCallback = useRef(onRead)
+  useEffect(() => { readCallback.current = onRead }, [onRead])
   const requestId = useRef(crypto.randomUUID())
   const attempted = useRef(false)
   const load = useCallback(async () => {
@@ -105,6 +122,20 @@ function Conversation({ thread, onUpdate, onBack }: { thread: Thread; onUpdate: 
   // Message state is populated asynchronously from the selected conversation.
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { void load().catch(err => setError(errorText(err))).finally(() => setLoading(false)) }, [load, thread.updated_at])
+
+  useEffect(() => {
+    const markRead = async () => {
+      if (document.hidden || !messages.length) return
+      const latest = messages.filter(message => message.direction === 'inbound').at(-1)
+      if (!latest) return
+      const { error: readError } = await supabase!.from('email_thread_reads').upsert({ user_id: userId, thread_id: thread.id, read_at: latest.created_at })
+      if (readError) { setError(errorText(readError)); return }
+      readCallback.current()
+    }
+    void markRead()
+    document.addEventListener('visibilitychange', markRead)
+    return () => document.removeEventListener('visibilitychange', markRead)
+  }, [messages, thread.id, userId])
 
   async function reply(event: FormEvent) {
     event.preventDefault()
@@ -131,7 +162,7 @@ function Conversation({ thread, onUpdate, onBack }: { thread: Thread; onUpdate: 
   }
   return <section className="mail-conversation" aria-label="Selected conversation">
     <button className="mail-back" type="button" onClick={onBack}>← All conversations</button>
-    <div className="mail-conversation-header"><div><span className="mail-eyebrow">{thread.status} CONVERSATION</span><h2>{thread.subject}</h2><span className="mail-reference">{conversationReference(thread.id)}</span><p>{thread.contact_name} · {thread.contact_email}</p></div><button disabled={busy} onClick={() => void toggleStatus()}>{thread.status === 'open' ? 'Close conversation' : 'Reopen'}</button></div>
+    <div className="mail-conversation-header"><div><span className="mail-eyebrow">{thread.status} CONVERSATION</span><h2>{thread.subject}</h2><p>{thread.contact_name} · {thread.contact_email}<span className="mail-reference">{conversationReference(thread.id)}</span></p></div><button disabled={busy} onClick={() => void toggleStatus()}>{thread.status === 'open' ? 'Close conversation' : 'Reopen'}</button></div>
     {thread.service && <div className="mail-context"><span>Service: {thread.service}</span><span>Budget: {budgetLabel(thread.budget)}</span></div>}
     <div className="mail-messages" aria-live="polite">{loading ? <p>Loading conversation…</p> : messages.map(message => <EmailMessage key={message.id} message={message} contactName={thread.contact_name} busy={busy} onRetry={() => void sendReply(message.id, message.body)} />)}</div>
     <form className="mail-composer" onSubmit={reply}><label htmlFor="mail-reply">Reply to {thread.contact_email}</label><textarea id="mail-reply" rows={5} required maxLength={10000} placeholder="Write a thoughtful reply…" value={draft} disabled={busy} onChange={event => { if (attempted.current) { requestId.current = crypto.randomUUID(); attempted.current = false } setDraft(event.target.value) }} />
@@ -156,3 +187,4 @@ function EmailMessage({ message, contactName, busy, onRetry }: { message: Messag
     {message.status === 'pending' && <footer className="mail-message-footer"><span>This reply has not been confirmed as sent.</span><button disabled={busy} onClick={onRetry}>Retry this reply</button></footer>}
   </article>
 }
+
